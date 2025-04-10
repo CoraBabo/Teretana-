@@ -34,11 +34,11 @@ build_metadata.AdditionalFiles.ManifestResourceName = GymApp.AppShell.xaml
 build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
 build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
 
-[C:/Users/User/source/repos/GymApp/GymApp/MainPage.xaml]
+[C:/Users/User/source/repos/GymApp/GymApp/PregledKorisnikaPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
-build_metadata.AdditionalFiles.ManifestResourceName = GymApp.MainPage.xaml
-build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
-build_metadata.AdditionalFiles.RelativePath = MainPage.xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GymApp.PregledKorisnikaPage.xaml
+build_metadata.AdditionalFiles.TargetPath = PregledKorisnikaPage.xaml
+build_metadata.AdditionalFiles.RelativePath = PregledKorisnikaPage.xaml
 
 [C:/Users/User/source/repos/GymApp/GymApp/Resources/Styles/Colors.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
@@ -51,3 +51,9 @@ build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = GymApp.Resources.Styles.Styles.xaml
 build_metadata.AdditionalFiles.TargetPath = Resources\Styles\Styles.xaml
 build_metadata.AdditionalFiles.RelativePath = Resources\Styles\Styles.xaml
+
+[C:/Users/User/source/repos/GymApp/GymApp/UnosKorisnikaPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GymApp.UnosKorisnikaPage.xaml
+build_metadata.AdditionalFiles.TargetPath = UnosKorisnikaPage.xaml
+build_metadata.AdditionalFiles.RelativePath = UnosKorisnikaPage.xaml

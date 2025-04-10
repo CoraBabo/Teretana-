@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GymApp.PregledKorisnikaPage">
+
+	<ContentPage.Content>
+		<ScrollView>
+			<VerticalStackLayout Padding="20" Spacing="15">
+				<Label Text="Postojeći korisnici" FontSize="20" FontAttributes="Bold" Margin="0,20,0,0"/>
+				<CollectionView ItemsSource="{Binding Users}">
+					<CollectionView.ItemTemplate>
+						<DataTemplate>
+							<Frame BorderColor="Gray" Padding="10" Margin="0,5">
+								<StackLayout>
+									<Label Text="{Binding FirstName}" FontAttributes="Bold" />
+									<Label Text="{Binding LastName}" />
+									<Label Text="{Binding Email}" FontSize="12" TextColor="Gray"/>
+									<Button Text="Izmjena" Command="{Binding Path=BindingContext.EditUserCommand, Source={x:Reference PageRef}}" CommandParameter="{Binding .}" />
+								</StackLayout>
+							</Frame>
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+			</VerticalStackLayout>
+		</ScrollView>
+	</ContentPage.Content>
+
+</ContentPage>
