@@ -1,35 +1,60 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:GymApp"
-             x:Class="GymApp.PregledKorisnikaPage"
-             Title="Pregled korisnika">
-
-    <ContentPage.BindingContext>
-        <local:UserViewModel />
-    </ContentPage.BindingContext>
-
+             x:Class="GymApp.UnosKorisnikaPage">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
-            <Label Text="Postojeći korisnici" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label Text="{Binding IsEditing, Converter={local:BoolToStringConverter}, ConverterParameter='Izmjena korisnika|Unos novog korisnika'}" 
+                   FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black" />
 
-            <CollectionView ItemsSource="{Binding Users}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="Gray" Padding="10" Margin="0,5">
-                            <StackLayout>
-                                <Label Text="{Binding FirstName}" FontAttributes="Bold" />
-                                <Label Text="{Binding LastName}" />
-                                <Label Text="{Binding Email}" FontSize="12" TextColor="Gray" />
+            <StackLayout Spacing="5">
+                <Entry Placeholder="Ime" Text="{Binding FirstName}" BackgroundColor="#f3f3f3" />
+                <Label Text="{Binding FirstNameError}" TextColor="Red" FontSize="12" IsVisible="{Binding FirstNameError, Converter={StaticResource StringToBoolConverter}}" />
+            </StackLayout>
 
-                                
-                                <Button Text="Izmjena"
-                                        Command="{Binding BindingContext.EditUserCommand, Source={x:Reference Name=PageRef}}"
-                                        CommandParameter="{Binding}" />
-                            </StackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <StackLayout Spacing="5">
+                <Entry Placeholder="Prezime" Text="{Binding LastName}" BackgroundColor="#f3f3f3" />
+                <Label Text="{Binding LastNameError}" TextColor="Red" FontSize="12" IsVisible="{Binding LastNameError, Converter={StaticResource StringToBoolConverter}}" />
+            </StackLayout>
+
+            <StackLayout Spacing="5">
+                <Entry Placeholder="Email" Text="{Binding Email}" BackgroundColor="#f3f3f3" />
+                <Label Text="{Binding EmailError}" TextColor="Red" FontSize="12" IsVisible="{Binding EmailError, Converter={StaticResource StringToBoolConverter}}" />
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="10">
+                <!-- Show Add button when not editing -->
+                <Button Text="Dodaj korisnika" 
+                        Command="{Binding AddUserCommand}" 
+                        IsVisible="{Binding IsEditing, Converter={StaticResource InvertedBoolConverter}}"
+                        BackgroundColor="#4CAF50" 
+                        TextColor="White" 
+                        CornerRadius="8" 
+                        Padding="10"
+                        HorizontalOptions="FillAndExpand" />
+
+                <!-- Show Save and Cancel buttons when editing -->
+                <Button Text="Spremi izmjene" 
+                        Command="{Binding SaveEditCommand}" 
+                        IsVisible="{Binding IsEditing}"
+                        BackgroundColor="#2196F3" 
+                        TextColor="White" 
+                        CornerRadius="8" 
+                        Padding="10"
+                        HorizontalOptions="FillAndExpand" />
+
+                <Button Text="Odustani" 
+                        Command="{Binding CancelEditCommand}" 
+                        IsVisible="{Binding IsEditing}"
+                        BackgroundColor="#f44336" 
+                        TextColor="White" 
+                        CornerRadius="8" 
+                        Padding="10"
+                        HorizontalOptions="FillAndExpand" />
+            </StackLayout>
+
+            <BoxView HeightRequest="1" Color="#E0E0E0" Margin="0,20,0,0"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

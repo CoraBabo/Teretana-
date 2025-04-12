@@ -8,7 +8,13 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                
+                
             </ResourceDictionary.MergedDictionaries>
+
+            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <local:BoolToStringConverter x:Key="BoolToStringConverter" />
+            <local:StringToBoolConverter x:Key="StringToBoolConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

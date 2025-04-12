@@ -2,14 +2,16 @@
 {
     public partial class App : Application
     {
+        public static UserViewModel SharedViewModel { get; private set; }
+
         public App()
         {
             InitializeComponent();
+
+            SharedViewModel = new UserViewModel();
+
+            MainPage = new AppShell();
         }
 
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new AppShell());
-        }
     }
 }

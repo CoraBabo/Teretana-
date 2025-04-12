@@ -4,6 +4,8 @@ public partial class UnosKorisnikaPage : ContentPage
 {
     public UnosKorisnikaPage()
     {
-        InitializeComponent(); 
+        InitializeComponent();
+
+        BindingContext = App.SharedViewModel;
     }
 }
