@@ -46,7 +46,6 @@ namespace GymApp
             {
                 if (value is User user)
                 {
-                    // Create a command that calls the shared ViewModel's EditUserCommand
                     return new Command(() =>
                     {
                         var editCommand = App.SharedViewModel.EditUserCommand;

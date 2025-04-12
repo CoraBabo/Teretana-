@@ -14,10 +14,8 @@ namespace GymApp
         {
             base.OnAppearing();
 
-            // Force UI update
             if (BindingContext is UserViewModel viewModel)
             {
-                // Option 1: Refresh the entire CollectionView
                 var collectionView = this.FindByName<CollectionView>("UsersCollectionView");
                 if (collectionView != null)
                 {
@@ -25,7 +23,6 @@ namespace GymApp
                     collectionView.ItemsSource = viewModel.Users;
                 }
 
-                // Option 2: Force property change event for Users collection
                 viewModel.NotifyPropertyChanged(nameof(UserViewModel.Users));
             }
         }

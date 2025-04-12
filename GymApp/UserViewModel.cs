@@ -109,7 +109,6 @@ namespace GymApp
 
         private void ValidateEmail()
         {
-            // Simple email validation - you can make this more sophisticated
             EmailError = string.Empty;
             (AddUserCommand as Command).ChangeCanExecute();
             (SaveEditCommand as Command).ChangeCanExecute();
