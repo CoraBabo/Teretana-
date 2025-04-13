@@ -2,59 +2,74 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:GymApp"
-             x:Class="GymApp.UnosKorisnikaPage">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
-            <Label Text="{Binding IsEditing, Converter={local:BoolToStringConverter}, ConverterParameter='Izmjena korisnika|Unos novog korisnika'}" 
-                   FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black" />
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             x:Class="GymApp.UnosKorisnikaPage"
+             Title="Unos korisnika">
 
-            <StackLayout Spacing="5">
-                <Entry Placeholder="Ime" Text="{Binding FirstName}" BackgroundColor="#f3f3f3" />
-                <Label Text="{Binding FirstNameError}" TextColor="Red" FontSize="12" IsVisible="{Binding FirstNameError, Converter={StaticResource StringToBoolConverter}}" />
-            </StackLayout>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:StringToBoolConverter x:Key="StringToBoolConverter" />
+            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <local:BoolToStringConverter x:Key="BoolToStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-            <StackLayout Spacing="5">
-                <Entry Placeholder="Prezime" Text="{Binding LastName}" BackgroundColor="#f3f3f3" />
-                <Label Text="{Binding LastNameError}" TextColor="Red" FontSize="12" IsVisible="{Binding LastNameError, Converter={StaticResource StringToBoolConverter}}" />
-            </StackLayout>
+    <Grid Padding="20" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-            <StackLayout Spacing="5">
-                <Entry Placeholder="Email" Text="{Binding Email}" BackgroundColor="#f3f3f3" />
-                <Label Text="{Binding EmailError}" TextColor="Red" FontSize="12" IsVisible="{Binding EmailError, Converter={StaticResource StringToBoolConverter}}" />
-            </StackLayout>
+        <Label Text="{Binding IsEditing, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Izmjena korisnika|Dodavanje novog korisnika'}"
+               FontSize="24" 
+               Grid.Row="0" 
+               HorizontalOptions="Center" 
+               Margin="0,0,0,20"/>
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="10">
-                <!-- Show Add button when not editing -->
-                <Button Text="Dodaj korisnika" 
-                        Command="{Binding AddUserCommand}" 
-                        IsVisible="{Binding IsEditing, Converter={StaticResource InvertedBoolConverter}}"
-                        BackgroundColor="#4CAF50" 
-                        TextColor="White" 
-                        CornerRadius="8" 
-                        Padding="10"
-                        HorizontalOptions="FillAndExpand" />
+        <Label Text="Ime:" Grid.Row="1" />
+        <Entry Text="{Binding FirstName}" Grid.Row="2" Placeholder="Unesite ime" />
+        <Label Text="{Binding FirstNameError}" TextColor="Red" Grid.Row="3" 
+               IsVisible="{Binding FirstNameError, Converter={StaticResource StringToBoolConverter}}" />
 
-                <!-- Show Save and Cancel buttons when editing -->
-                <Button Text="Spremi izmjene" 
-                        Command="{Binding SaveEditCommand}" 
-                        IsVisible="{Binding IsEditing}"
-                        BackgroundColor="#2196F3" 
-                        TextColor="White" 
-                        CornerRadius="8" 
-                        Padding="10"
-                        HorizontalOptions="FillAndExpand" />
+        <Label Text="Prezime:" Grid.Row="4" />
+        <Entry Text="{Binding LastName}" Grid.Row="5" Placeholder="Unesite prezime" />
+        <Label Text="{Binding LastNameError}" TextColor="Red" Grid.Row="6" 
+               IsVisible="{Binding LastNameError, Converter={StaticResource StringToBoolConverter}}" />
 
-                <Button Text="Odustani" 
-                        Command="{Binding CancelEditCommand}" 
-                        IsVisible="{Binding IsEditing}"
-                        BackgroundColor="#f44336" 
-                        TextColor="White" 
-                        CornerRadius="8" 
-                        Padding="10"
-                        HorizontalOptions="FillAndExpand" />
-            </StackLayout>
+        <Label Text="Email:" Grid.Row="7" />
+        <Entry Text="{Binding Email}" Grid.Row="8" Placeholder="Unesite email" Keyboard="Email" />
+        <Label Text="{Binding EmailError}" TextColor="Red" Grid.Row="9" 
+               IsVisible="{Binding EmailError, Converter={StaticResource StringToBoolConverter}}" />
 
-            <BoxView HeightRequest="1" Color="#E0E0E0" Margin="0,20,0,0"/>
-        </VerticalStackLayout>
-    </ScrollView>
+        <Label Text="Datum rođenja:" Grid.Row="10" />
+        <DatePicker Date="{Binding DateOfBirth}" Grid.Row="11" 
+                    Format="d" />
+        <Label Text="{Binding DateOfBirthError}" TextColor="Red" Grid.Row="12" 
+               IsVisible="{Binding DateOfBirthError, Converter={StaticResource StringToBoolConverter}}" />
+
+        <HorizontalStackLayout Grid.Row="13" Spacing="10" HorizontalOptions="Center" Margin="0,20,0,0">
+            <Button Text="Spremi" 
+                    Command="{Binding IsEditing, Converter={StaticResource BoolToStringConverter}, ConverterParameter='{Binding SaveEditCommand}|{Binding AddUserCommand}'}" 
+                    WidthRequest="120"
+                    HeightRequest="40" />
+
+            <Button Text="Odustani" 
+                    Command="{Binding CancelEditCommand}" 
+                    IsVisible="{Binding IsEditing}" 
+                    WidthRequest="120"
+                    HeightRequest="40" />
+        </HorizontalStackLayout>
+    </Grid>
 </ContentPage>

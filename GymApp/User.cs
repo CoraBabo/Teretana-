@@ -8,6 +8,8 @@ namespace GymApp
         private string firstName;
         private string lastName;
         private string email;
+        private DateTime dateOfBirth;
+
 
         public string FirstName
         {
@@ -45,6 +47,31 @@ namespace GymApp
                     email = value;
                     OnPropertyChanged();
                 }
+            }
+        }
+
+        public DateTime DateOfBirth
+        {
+            get => dateOfBirth;
+            set
+            {
+                if (dateOfBirth != value)
+                {
+                    dateOfBirth = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Age));
+                }
+            }
+        }
+
+        public int Age
+        {
+            get
+            {
+                var today = DateTime.Today;
+                var age = today.Year - DateOfBirth.Year;
+                if (DateOfBirth.Date > today.AddYears(-age)) age--;
+                return age;
             }
         }
 

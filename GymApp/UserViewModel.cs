@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -11,11 +11,13 @@ namespace GymApp
         private string firstName;
         private string lastName;
         private string email;
+        private DateTime dateOfBirth = DateTime.Today.AddYears(-18);
         private User selectedUser;
         private bool isEditing = false;
         private string firstNameError;
         private string lastNameError;
         private string emailError;
+        private string dateOfBirthError;
 
         public string FirstName
         {
@@ -50,6 +52,17 @@ namespace GymApp
             }
         }
 
+        public DateTime DateOfBirth
+        {
+            get => dateOfBirth;
+            set
+            {
+                dateOfBirth = value;
+                OnPropertyChanged();
+                ValidateDateOfBirth();
+            }
+        }
+
         public string FirstNameError
         {
             get => firstNameError;
@@ -66,6 +79,12 @@ namespace GymApp
         {
             get => emailError;
             set { emailError = value; OnPropertyChanged(); }
+        }
+
+        public string DateOfBirthError
+        {
+            get => dateOfBirthError;
+            set { dateOfBirthError = value; OnPropertyChanged(); }
         }
 
         public bool IsEditing
@@ -114,23 +133,65 @@ namespace GymApp
             (SaveEditCommand as Command).ChangeCanExecute();
         }
 
+        private void ValidateDateOfBirth()
+        {
+            var today = DateTime.Today;
+            if (DateOfBirth > today)
+            {
+                DateOfBirthError = "Datum rođenja ne može biti u budućnosti";
+            }
+            else if (DateOfBirth.Year < 1900)
+            {
+                DateOfBirthError = "Datum rođenja nije valjan";
+            }
+            else
+            {
+                DateOfBirthError = string.Empty;
+            }
+
+            (AddUserCommand as Command).ChangeCanExecute();
+            (SaveEditCommand as Command).ChangeCanExecute();
+        }
+
         private bool CanAddUser()
         {
-            return !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName);
+            return !string.IsNullOrWhiteSpace(FirstName) &&
+                   !string.IsNullOrWhiteSpace(LastName) &&
+                   string.IsNullOrEmpty(DateOfBirthError);
         }
 
         private bool CanSaveEdit()
         {
-            return !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName);
+            return !string.IsNullOrWhiteSpace(FirstName) &&
+                   !string.IsNullOrWhiteSpace(LastName) &&
+                   string.IsNullOrEmpty(DateOfBirthError);
         }
 
         private async void AddUser()
         {
             if (ValidateAll())
             {
-                Users.Add(new User { FirstName = FirstName, LastName = LastName, Email = Email });
+                Users.Add(new User
+                {
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    Email = Email,
+                    DateOfBirth = DateOfBirth
+                });
+
+                OnPropertyChanged(nameof(Users));
                 ClearFields();
-                await Shell.Current.GoToAsync("//Pregled_korisnika");
+
+                try
+                {
+                    await Shell.Current.GoToAsync("pregledkorisnika");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+                    
+                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+                }
             }
         }
 
@@ -143,17 +204,18 @@ namespace GymApp
             FirstName = user.FirstName;
             LastName = user.LastName;
             Email = user.Email;
+            DateOfBirth = user.DateOfBirth;
             IsEditing = true;
 
             try
             {
-                // Use the registered route name
-                await Shell.Current.GoToAsync("//Unos_korisnika");
+                await Shell.Current.GoToAsync("unoskorisnika");
             }
             catch (Exception ex)
             {
-                // Debug the error
                 System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+              
+                await Shell.Current.GoToAsync("//Unos_korisnika");
             }
         }
 
@@ -161,33 +223,28 @@ namespace GymApp
         {
             if (ValidateAll() && SelectedUser != null)
             {
-                // Option 1: Update the properties which will trigger property change notifications
                 SelectedUser.FirstName = FirstName;
                 SelectedUser.LastName = LastName;
                 SelectedUser.Email = Email;
+                SelectedUser.DateOfBirth = DateOfBirth;
 
-                // Option 2: Force refresh by removing and re-adding
-                int index = Users.IndexOf(SelectedUser);
-                if (index != -1)
-                {
-                    Users.Remove(SelectedUser);
-                    Users.Insert(index, SelectedUser);
-                }
-
-                // Force UI refresh by triggering collection changed event
-                var tempCollection = new ObservableCollection<User>(Users);
-                Users.Clear();
-                foreach (var u in tempCollection)
-                {
-                    Users.Add(u);
-                }
+                
+                OnPropertyChanged(nameof(Users));
 
                 ClearFields();
                 IsEditing = false;
                 SelectedUser = null;
 
-                // Use the registered route name
-                await Shell.Current.GoToAsync("//Pregled_korisnika");
+                try
+                {
+                    await Shell.Current.GoToAsync("pregledkorisnika");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+                    
+                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+                }
             }
         }
 
@@ -197,14 +254,23 @@ namespace GymApp
             IsEditing = false;
             SelectedUser = null;
 
-            // Use the registered route name
-            await Shell.Current.GoToAsync("//Pregled_korisnika");
+            try
+            {
+                await Shell.Current.GoToAsync("pregledkorisnika");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+                
+                await Shell.Current.GoToAsync("//Pregled_korisnika");
+            }
         }
 
         private void ClearFields()
         {
             FirstName = LastName = Email = string.Empty;
-            FirstNameError = LastNameError = EmailError = string.Empty;
+            DateOfBirth = DateTime.Today.AddYears(-18);
+            FirstNameError = LastNameError = EmailError = DateOfBirthError = string.Empty;
         }
 
         private bool ValidateAll()
@@ -212,10 +278,12 @@ namespace GymApp
             ValidateFirstName();
             ValidateLastName();
             ValidateEmail();
+            ValidateDateOfBirth();
 
             return string.IsNullOrEmpty(FirstNameError) &&
                    string.IsNullOrEmpty(LastNameError) &&
-                   string.IsNullOrEmpty(EmailError);
+                   string.IsNullOrEmpty(EmailError) &&
+                   string.IsNullOrEmpty(DateOfBirthError);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -223,7 +291,6 @@ namespace GymApp
         void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        // Add a public method to notify property changes
         public void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

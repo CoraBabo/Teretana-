@@ -1,4 +1,6 @@
-﻿namespace GymApp;
+﻿using System;
+
+namespace GymApp;
 
 public partial class UnosKorisnikaPage : ContentPage
 {
