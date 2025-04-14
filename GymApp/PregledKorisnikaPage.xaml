@@ -4,21 +4,18 @@
              xmlns:local="clr-namespace:GymApp"
              x:Class="GymApp.PregledKorisnikaPage"
              Title="Pregled korisnika">
-
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <local:EditCommandConverter x:Key="EditCommandConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-
     <Grid Padding="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
         <Label Text="Popis korisnika" FontSize="24" Grid.Row="0" HorizontalOptions="Center" Margin="0,0,0,20" />
-
         <CollectionView x:Name="UsersCollectionView" Grid.Row="1" ItemsSource="{Binding Users}">
             <CollectionView.EmptyView>
                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">

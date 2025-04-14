@@ -5,7 +5,6 @@
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              x:Class="GymApp.UnosKorisnikaPage"
              Title="Unos korisnika">
-
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:StringToBoolConverter x:Key="StringToBoolConverter" />
@@ -13,7 +12,6 @@
             <local:BoolToStringConverter x:Key="BoolToStringConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-
     <Grid Padding="20" RowSpacing="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -29,47 +27,55 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
         <Label Text="{Binding IsEditing, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Izmjena korisnika|Dodavanje novog korisnika'}"
                FontSize="24" 
                Grid.Row="0" 
                HorizontalOptions="Center" 
                Margin="0,0,0,20"/>
-
         <Label Text="Ime:" Grid.Row="1" />
         <Entry Text="{Binding FirstName}" Grid.Row="2" Placeholder="Unesite ime" />
         <Label Text="{Binding FirstNameError}" TextColor="Red" Grid.Row="3" 
                IsVisible="{Binding FirstNameError, Converter={StaticResource StringToBoolConverter}}" />
-
         <Label Text="Prezime:" Grid.Row="4" />
         <Entry Text="{Binding LastName}" Grid.Row="5" Placeholder="Unesite prezime" />
         <Label Text="{Binding LastNameError}" TextColor="Red" Grid.Row="6" 
                IsVisible="{Binding LastNameError, Converter={StaticResource StringToBoolConverter}}" />
-
         <Label Text="Email:" Grid.Row="7" />
         <Entry Text="{Binding Email}" Grid.Row="8" Placeholder="Unesite email" Keyboard="Email" />
         <Label Text="{Binding EmailError}" TextColor="Red" Grid.Row="9" 
                IsVisible="{Binding EmailError, Converter={StaticResource StringToBoolConverter}}" />
-
         <Label Text="Datum rođenja:" Grid.Row="10" />
         <DatePicker Date="{Binding DateOfBirth}" Grid.Row="11" 
                     Format="d" />
         <Label Text="{Binding DateOfBirthError}" TextColor="Red" Grid.Row="12" 
                IsVisible="{Binding DateOfBirthError, Converter={StaticResource StringToBoolConverter}}" />
 
-        <HorizontalStackLayout Grid.Row="13" Spacing="10" HorizontalOptions="Center" Margin="0,20,0,0">
-            <Button Text="Spremi" 
-                    Command="{Binding IsEditing, Converter={StaticResource BoolToStringConverter}, ConverterParameter='{Binding SaveEditCommand}|{Binding AddUserCommand}'}" 
-                    WidthRequest="120"
+        <!-- Normal buttons -->
+        <Grid Grid.Row="13" Margin="0,20,0,0">
+            <Button x:Name="AddButton"
+                    Text="Dodaj korisnika" 
+                    Command="{Binding AddUserCommand}" 
+                    IsVisible="{Binding IsEditing, Converter={StaticResource InvertedBoolConverter}}"
+                    HorizontalOptions="Center"
+                    WidthRequest="150"
                     HeightRequest="40" />
 
-            <Button Text="Odustani" 
-                    Command="{Binding CancelEditCommand}" 
-                    IsVisible="{Binding IsEditing}" 
-                    WidthRequest="120"
-                    HeightRequest="40" />
-        </HorizontalStackLayout>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10" 
+                         IsVisible="{Binding IsEditing}">
+                <Button Text="Spremi izmjene" 
+                        Command="{Binding SaveEditCommand}" 
+                        WidthRequest="150"
+                        HeightRequest="40" />
+                <Button Text="Odustani" 
+                        Command="{Binding CancelEditCommand}" 
+                        WidthRequest="100"
+                        HeightRequest="40" />
+            </StackLayout>
+        </Grid>
+
+        
     </Grid>
 </ContentPage>

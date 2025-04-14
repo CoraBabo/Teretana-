@@ -21,9 +21,10 @@ namespace GymApp
                 {
                     collectionView.ItemsSource = null;
                     collectionView.ItemsSource = viewModel.Users;
-                }
 
-                viewModel.NotifyPropertyChanged(nameof(UserViewModel.Users));
+                    // Force refresh
+                    viewModel.NotifyPropertyChanged(nameof(UserViewModel.Users));
+                }
             }
         }
 

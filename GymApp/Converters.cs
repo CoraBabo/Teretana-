@@ -39,29 +39,29 @@ namespace GymApp
 
             return false;
         }
+    }
 
-        public class EditCommandConverter : IValueConverter
+    public class EditCommandConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            if (value is User user)
             {
-                if (value is User user)
+                return new Command(() =>
                 {
-                    return new Command(() =>
+                    var editCommand = App.SharedViewModel.EditUserCommand;
+                    if (editCommand.CanExecute(user))
                     {
-                        var editCommand = App.SharedViewModel.EditUserCommand;
-                        if (editCommand.CanExecute(user))
-                        {
-                            editCommand.Execute(user);
-                        }
-                    });
-                }
-                return null;
+                        editCommand.Execute(user);
+                    }
+                });
             }
+            return null;
+        }
 
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

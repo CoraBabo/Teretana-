@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:views="clr-namespace:GymApp"
-       x:Class="GymApp.AppShell">
+       xmlns:local="clr-namespace:GymApp"
+       x:Class="GymApp.AppShell"
+       Title="GymApp">
 
-    <FlyoutItem Title="Unos korisnika" Route="Unos_korisnika">
-        <ShellContent ContentTemplate="{DataTemplate views:UnosKorisnikaPage}" />
-    </FlyoutItem>
+    <TabBar>
+        <ShellContent 
+            Title="Unos korisnika"
+            ContentTemplate="{DataTemplate local:UnosKorisnikaPage}"
+            Route="Unos_korisnika" />
 
-    <FlyoutItem Title="Pregled korisnika" Route="Pregled_korisnika">
-        <ShellContent ContentTemplate="{DataTemplate views:PregledKorisnikaPage}" />
-    </FlyoutItem>
+        <ShellContent 
+            Title="Pregled korisnika"
+            ContentTemplate="{DataTemplate local:PregledKorisnikaPage}"
+            Route="Pregled_korisnika" />
+    </TabBar>
+
 </Shell>

@@ -6,8 +6,9 @@
         {
             InitializeComponent();
 
-            Routing.RegisterRoute("unoskorisnika", typeof(UnosKorisnikaPage));
-            Routing.RegisterRoute("pregledkorisnika", typeof(PregledKorisnikaPage));
+            // Register routes with names that match the Shell content routes in AppShell.xaml
+            Routing.RegisterRoute("Unos_korisnika", typeof(UnosKorisnikaPage));
+            Routing.RegisterRoute("Pregled_korisnika", typeof(PregledKorisnikaPage));
         }
     }
 }

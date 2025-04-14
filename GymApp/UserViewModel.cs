@@ -110,27 +110,54 @@ namespace GymApp
             EditUserCommand = new Command<User>(StartEditUser);
             SaveEditCommand = new Command(SaveEdit, CanSaveEdit);
             CancelEditCommand = new Command(CancelEdit);
+
+            // Add debug data to see if binding is working
+            Users.Add(new User { FirstName = "Debug", LastName = "User", Email = "debug@example.com", DateOfBirth = DateTime.Today.AddYears(-30) });
+
+            // Output initial state
+            System.Diagnostics.Debug.WriteLine("UserViewModel initialized");
+            System.Diagnostics.Debug.WriteLine($"Users count: {Users.Count}");
         }
 
         private void ValidateFirstName()
         {
             FirstNameError = string.IsNullOrWhiteSpace(FirstName) ? "Ime je obavezno" : string.Empty;
-            (AddUserCommand as Command).ChangeCanExecute();
-            (SaveEditCommand as Command).ChangeCanExecute();
+            AddUserCommand.ChangeCanExecute();
+            SaveEditCommand.ChangeCanExecute();
+            System.Diagnostics.Debug.WriteLine($"FirstName validated: '{FirstName}', Error: '{FirstNameError}'");
         }
 
         private void ValidateLastName()
         {
             LastNameError = string.IsNullOrWhiteSpace(LastName) ? "Prezime je obavezno" : string.Empty;
-            (AddUserCommand as Command).ChangeCanExecute();
-            (SaveEditCommand as Command).ChangeCanExecute();
+            AddUserCommand.ChangeCanExecute();
+            SaveEditCommand.ChangeCanExecute();
+            System.Diagnostics.Debug.WriteLine($"LastName validated: '{LastName}', Error: '{LastNameError}'");
         }
 
         private void ValidateEmail()
         {
-            EmailError = string.Empty;
-            (AddUserCommand as Command).ChangeCanExecute();
-            (SaveEditCommand as Command).ChangeCanExecute();
+            EmailError = string.IsNullOrEmpty(Email) ? string.Empty :
+                         !IsValidEmail(Email) ? "Email nije valjan" : string.Empty;
+            AddUserCommand.ChangeCanExecute();
+            SaveEditCommand.ChangeCanExecute();
+            System.Diagnostics.Debug.WriteLine($"Email validated: '{Email}', Error: '{EmailError}'");
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void ValidateDateOfBirth()
@@ -149,54 +176,101 @@ namespace GymApp
                 DateOfBirthError = string.Empty;
             }
 
-            (AddUserCommand as Command).ChangeCanExecute();
-            (SaveEditCommand as Command).ChangeCanExecute();
+            AddUserCommand.ChangeCanExecute();
+            SaveEditCommand.ChangeCanExecute();
+            System.Diagnostics.Debug.WriteLine($"DateOfBirth validated: '{DateOfBirth:d}', Error: '{DateOfBirthError}'");
         }
 
         private bool CanAddUser()
         {
-            return !string.IsNullOrWhiteSpace(FirstName) &&
+            bool canAdd = !string.IsNullOrWhiteSpace(FirstName) &&
                    !string.IsNullOrWhiteSpace(LastName) &&
+                   string.IsNullOrEmpty(FirstNameError) &&
+                   string.IsNullOrEmpty(LastNameError) &&
+                   string.IsNullOrEmpty(EmailError) &&
                    string.IsNullOrEmpty(DateOfBirthError);
+
+            System.Diagnostics.Debug.WriteLine($"CanAddUser: {canAdd}");
+            System.Diagnostics.Debug.WriteLine($"FirstName: '{FirstName}', Error: '{FirstNameError}'");
+            System.Diagnostics.Debug.WriteLine($"LastName: '{LastName}', Error: '{LastNameError}'");
+            System.Diagnostics.Debug.WriteLine($"Email: '{Email}', Error: '{EmailError}'");
+            System.Diagnostics.Debug.WriteLine($"DateOfBirth: '{DateOfBirth:d}', Error: '{DateOfBirthError}'");
+
+            return canAdd;
         }
 
         private bool CanSaveEdit()
         {
-            return !string.IsNullOrWhiteSpace(FirstName) &&
+            bool canSave = !string.IsNullOrWhiteSpace(FirstName) &&
                    !string.IsNullOrWhiteSpace(LastName) &&
+                   string.IsNullOrEmpty(FirstNameError) &&
+                   string.IsNullOrEmpty(LastNameError) &&
+                   string.IsNullOrEmpty(EmailError) &&
                    string.IsNullOrEmpty(DateOfBirthError);
+
+            System.Diagnostics.Debug.WriteLine($"CanSaveEdit: {canSave}");
+            return canSave;
         }
 
         private async void AddUser()
         {
+            System.Diagnostics.Debug.WriteLine("AddUser method called");
+
             if (ValidateAll())
             {
-                Users.Add(new User
+                System.Diagnostics.Debug.WriteLine("Validation passed, creating new user");
+
+                var newUser = new User
                 {
                     FirstName = FirstName,
                     LastName = LastName,
                     Email = Email,
                     DateOfBirth = DateOfBirth
-                });
+                };
 
+                System.Diagnostics.Debug.WriteLine($"Adding user: {newUser.FirstName} {newUser.LastName}");
+                Users.Add(newUser);
+
+                // Force UI update
                 OnPropertyChanged(nameof(Users));
+                System.Diagnostics.Debug.WriteLine($"New Users count: {Users.Count}");
+
                 ClearFields();
 
                 try
                 {
-                    await Shell.Current.GoToAsync("pregledkorisnika");
+                    System.Diagnostics.Debug.WriteLine("Attempting navigation to Pregled_korisnika");
+                    // Match the route in AppShell.xaml
+                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+                    System.Diagnostics.Debug.WriteLine("Navigation successful");
                 }
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-                    
-                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+                    System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                    // Try alternative navigation
+                    try
+                    {
+                        System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
+                        await Shell.Current.GoToAsync($"///{nameof(PregledKorisnikaPage)}");
+                    }
+                    catch (Exception ex2)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Second navigation attempt failed: {ex2.Message}");
+                    }
                 }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Validation failed");
             }
         }
 
         private async void StartEditUser(User user)
         {
+            System.Diagnostics.Debug.WriteLine($"StartEditUser called with user: {user?.FirstName}");
+
             if (user == null)
                 return;
 
@@ -206,29 +280,56 @@ namespace GymApp
             Email = user.Email;
             DateOfBirth = user.DateOfBirth;
             IsEditing = true;
+            System.Diagnostics.Debug.WriteLine("IsEditing set to true");
 
             try
             {
-                await Shell.Current.GoToAsync("unoskorisnika");
+                System.Diagnostics.Debug.WriteLine("Attempting navigation to Unos_korisnika");
+                await Shell.Current.GoToAsync("//Unos_korisnika");
+                System.Diagnostics.Debug.WriteLine("Navigation successful");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-              
-                await Shell.Current.GoToAsync("//Unos_korisnika");
+
+                // Try alternative navigation
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
+                    await Shell.Current.GoToAsync($"///{nameof(UnosKorisnikaPage)}");
+                }
+                catch (Exception ex2)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Second navigation attempt failed: {ex2.Message}");
+                }
             }
         }
 
         private async void SaveEdit()
         {
+            System.Diagnostics.Debug.WriteLine("SaveEdit method called");
+
             if (ValidateAll() && SelectedUser != null)
             {
+                System.Diagnostics.Debug.WriteLine("Validation passed, updating user");
+
                 SelectedUser.FirstName = FirstName;
                 SelectedUser.LastName = LastName;
                 SelectedUser.Email = Email;
                 SelectedUser.DateOfBirth = DateOfBirth;
 
-                
+                // Force UI update
+                var index = Users.IndexOf(SelectedUser);
+                if (index >= 0)
+                {
+                    Users[index] = SelectedUser;
+                    System.Diagnostics.Debug.WriteLine($"Updated user at index {index}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("User not found in collection");
+                }
+
                 OnPropertyChanged(nameof(Users));
 
                 ClearFields();
@@ -237,62 +338,105 @@ namespace GymApp
 
                 try
                 {
-                    await Shell.Current.GoToAsync("pregledkorisnika");
+                    System.Diagnostics.Debug.WriteLine("Attempting navigation to Pregled_korisnika");
+                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+                    System.Diagnostics.Debug.WriteLine("Navigation successful");
                 }
                 catch (Exception ex)
                 {
                     System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-                    
-                    await Shell.Current.GoToAsync("//Pregled_korisnika");
+
+                    // Try alternative navigation
+                    try
+                    {
+                        System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
+                        await Shell.Current.GoToAsync($"///{nameof(PregledKorisnikaPage)}");
+                    }
+                    catch (Exception ex2)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Second navigation attempt failed: {ex2.Message}");
+                    }
                 }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Validation failed or SelectedUser is null");
             }
         }
 
         private async void CancelEdit()
         {
+            System.Diagnostics.Debug.WriteLine("CancelEdit method called");
+
             ClearFields();
             IsEditing = false;
             SelectedUser = null;
 
             try
             {
-                await Shell.Current.GoToAsync("pregledkorisnika");
+                System.Diagnostics.Debug.WriteLine("Attempting navigation to Pregled_korisnika");
+                await Shell.Current.GoToAsync("//Pregled_korisnika");
+                System.Diagnostics.Debug.WriteLine("Navigation successful");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
-                
-                await Shell.Current.GoToAsync("//Pregled_korisnika");
+
+                // Try alternative navigation
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
+                    await Shell.Current.GoToAsync($"///{nameof(PregledKorisnikaPage)}");
+                }
+                catch (Exception ex2)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Second navigation attempt failed: {ex2.Message}");
+                }
             }
         }
 
         private void ClearFields()
         {
-            FirstName = LastName = Email = string.Empty;
+            System.Diagnostics.Debug.WriteLine("ClearFields called");
+            FirstName = string.Empty;
+            LastName = string.Empty;
+            Email = string.Empty;
             DateOfBirth = DateTime.Today.AddYears(-18);
-            FirstNameError = LastNameError = EmailError = DateOfBirthError = string.Empty;
+            FirstNameError = string.Empty;
+            LastNameError = string.Empty;
+            EmailError = string.Empty;
+            DateOfBirthError = string.Empty;
         }
 
         private bool ValidateAll()
         {
+            System.Diagnostics.Debug.WriteLine("ValidateAll called");
+
             ValidateFirstName();
             ValidateLastName();
             ValidateEmail();
             ValidateDateOfBirth();
 
-            return string.IsNullOrEmpty(FirstNameError) &&
+            bool isValid = string.IsNullOrEmpty(FirstNameError) &&
                    string.IsNullOrEmpty(LastNameError) &&
                    string.IsNullOrEmpty(EmailError) &&
                    string.IsNullOrEmpty(DateOfBirthError);
+
+            System.Diagnostics.Debug.WriteLine($"ValidateAll result: {isValid}");
+            return isValid;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         void OnPropertyChanged([CallerMemberName] string name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        {
+            System.Diagnostics.Debug.WriteLine($"PropertyChanged: {name}");
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         public void NotifyPropertyChanged(string propertyName)
         {
+            System.Diagnostics.Debug.WriteLine($"NotifyPropertyChanged: {propertyName}");
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
