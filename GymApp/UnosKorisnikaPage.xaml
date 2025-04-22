@@ -53,6 +53,8 @@
         <Label Text="{Binding DateOfBirthError}" TextColor="Red" Grid.Row="12" 
                IsVisible="{Binding DateOfBirthError, Converter={StaticResource StringToBoolConverter}}" />
 
+        <Label Text="{Binding BusinessError}" TextColor="Red" Grid.Row="12" 
+               IsVisible="{Binding BusinessError, Converter={StaticResource StringToBoolConverter}}" />
         <!-- Normal buttons -->
         <Grid Grid.Row="13" Margin="0,20,0,0">
             <Button x:Name="AddButton"

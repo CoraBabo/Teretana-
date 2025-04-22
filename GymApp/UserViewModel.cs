@@ -8,6 +8,8 @@ namespace GymApp
     {
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
 
+        public int UserCount => Users.Count;
+
         private string firstName;
         private string lastName;
         private string email;
@@ -18,6 +20,7 @@ namespace GymApp
         private string lastNameError;
         private string emailError;
         private string dateOfBirthError;
+        private string businessError;
 
         public string FirstName
         {
@@ -87,6 +90,12 @@ namespace GymApp
             set { dateOfBirthError = value; OnPropertyChanged(); }
         }
 
+        public string BusinessError
+        {
+            get => businessError;
+            set { businessError = value; OnPropertyChanged(); }
+        }
+
         public bool IsEditing
         {
             get => isEditing;
@@ -103,25 +112,70 @@ namespace GymApp
         public Command<User> EditUserCommand { get; }
         public Command SaveEditCommand { get; }
         public Command CancelEditCommand { get; }
+        public Command<User> DeleteUserCommand { get; }
 
         public UserViewModel()
         {
-            AddUserCommand = new Command(AddUser, CanAddUser);
+            AddUserCommand = new Command(AddUser);
             EditUserCommand = new Command<User>(StartEditUser);
-            SaveEditCommand = new Command(SaveEdit, CanSaveEdit);
+            SaveEditCommand = new Command(SaveEdit);
             CancelEditCommand = new Command(CancelEdit);
+            DeleteUserCommand = new Command<User>(DeleteUser);
 
-            // Add debug data to see if binding is working
+            
             Users.Add(new User { FirstName = "Debug", LastName = "User", Email = "debug@example.com", DateOfBirth = DateTime.Today.AddYears(-30) });
 
-            // Output initial state
+            
             System.Diagnostics.Debug.WriteLine("UserViewModel initialized");
             System.Diagnostics.Debug.WriteLine($"Users count: {Users.Count}");
+
+            Users.CollectionChanged += (s, e) =>
+            {
+                OnPropertyChanged(nameof(UserCount));
+            };
+        }
+
+        private async void DeleteUser(User user)
+        {
+            if (user == null)
+                return;
+
+            System.Diagnostics.Debug.WriteLine($"Attempting to delete user: {user.FirstName} {user.LastName}");
+
+            
+            var currentPage = Application.Current.MainPage;
+
+            
+            bool confirmed = await currentPage.DisplayAlert(
+                "Potvrda brisanja",
+                $"Jeste li sigurni da želite obrisati korisnika {user.FirstName} {user.LastName}?",
+                "Da",
+                "Ne");
+
+            if (confirmed)
+            {
+                
+                Users.Remove(user);
+
+                
+                OnPropertyChanged(nameof(Users));
+                System.Diagnostics.Debug.WriteLine($"User deleted. Updated Users count: {Users.Count}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("User deletion cancelled");
+            }
         }
 
         private void ValidateFirstName()
         {
             FirstNameError = string.IsNullOrWhiteSpace(FirstName) ? "Ime je obavezno" : string.Empty;
+
+            if (string.IsNullOrEmpty(FirstNameError))
+            {
+                FirstNameError = FirstName.Length > 20 ? "Ime ne može biti duže od 20 karaktera." : string.Empty;
+            }
+
             AddUserCommand.ChangeCanExecute();
             SaveEditCommand.ChangeCanExecute();
             System.Diagnostics.Debug.WriteLine($"FirstName validated: '{FirstName}', Error: '{FirstNameError}'");
@@ -163,9 +217,9 @@ namespace GymApp
         private void ValidateDateOfBirth()
         {
             var today = DateTime.Today;
-            if (DateOfBirth > today)
+            if (DateOfBirth > today.AddYears(-18))
             {
-                DateOfBirthError = "Datum rođenja ne može biti u budućnosti";
+                DateOfBirthError = "Datum mora biti punoljetna";
             }
             else if (DateOfBirth.Year < 1900)
             {
@@ -179,6 +233,24 @@ namespace GymApp
             AddUserCommand.ChangeCanExecute();
             SaveEditCommand.ChangeCanExecute();
             System.Diagnostics.Debug.WriteLine($"DateOfBirth validated: '{DateOfBirth:d}', Error: '{DateOfBirthError}'");
+        }
+
+        private void ValidateBusinessRules()
+        {
+
+            bool postoji = Users.Any(u =>
+            u.FirstName.Equals(FirstName, StringComparison.OrdinalIgnoreCase) &&
+            u.LastName.Equals(LastName, StringComparison.OrdinalIgnoreCase));
+
+            if (postoji)
+            {
+                BusinessError = "Osoba sa ovim imenom i prezimenom vec postoji.";
+            }
+
+
+            AddUserCommand.ChangeCanExecute();
+            SaveEditCommand.ChangeCanExecute();
+            System.Diagnostics.Debug.WriteLine($" Error: '{BusinessError}'");
         }
 
         private bool CanAddUser()
@@ -415,7 +487,9 @@ namespace GymApp
             ValidateFirstName();
             ValidateLastName();
             ValidateEmail();
+
             ValidateDateOfBirth();
+            ValidateBusinessRules();
 
             bool isValid = string.IsNullOrEmpty(FirstNameError) &&
                    string.IsNullOrEmpty(LastNameError) &&

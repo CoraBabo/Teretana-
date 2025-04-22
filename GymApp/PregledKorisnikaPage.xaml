@@ -16,7 +16,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Label Text="Popis korisnika" FontSize="24" Grid.Row="0" HorizontalOptions="Center" Margin="0,0,0,20" />
-        <CollectionView x:Name="UsersCollectionView" Grid.Row="1" ItemsSource="{Binding Users}">
+        <Label x:Name="counterLabel" Text="{Binding UserCount}" FontSize="24" Grid.Row="1" HorizontalOptions="Center" Margin="0,0,0,20" />
+        <CollectionView x:Name="UsersCollectionView" Grid.Row="2" ItemsSource="{Binding Users}">
             <CollectionView.EmptyView>
                 <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
                     <Label Text="Nema korisnika za prikaz." FontSize="18" TextColor="Gray" />
@@ -24,7 +25,7 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10" ColumnDefinitions="*, Auto">
+                    <Grid Padding="10" ColumnDefinitions="*, Auto, Auto">
                         <VerticalStackLayout Spacing="5">
                             <Label Text="{Binding FirstName, StringFormat='Ime: {0}'}" FontAttributes="Bold" />
                             <Label Text="{Binding LastName, StringFormat='Prezime: {0}'}" />
@@ -37,6 +38,14 @@
                                 WidthRequest="100"
                                 VerticalOptions="Center"
                                 Clicked="OnEditButtonClicked" />
+                        <Button Grid.Column="2" 
+                                Text="Obriši" 
+                                WidthRequest="100"
+                                VerticalOptions="Center"
+                                BackgroundColor="Red"
+                                TextColor="White"
+                                Margin="5,0,0,0"
+                                Clicked="OnDeleteButtonClicked" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

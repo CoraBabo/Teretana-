@@ -6,9 +6,6 @@ C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\com.companynam
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\com.companyname.gymapp-Signed.aab
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\com.companyname.gymapp-Signed.apk
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\com.companyname.gymapp-Signed.apk.idsig
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.Maui.Controls.HotReload.Forms.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.MobileTapContracts.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.TapContract.dll
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\build.props
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\adb.props
@@ -129,7 +126,6 @@ C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.Assembl
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.csproj.CoreCompileInputs.cache
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.sourcelink.json
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\XamlC.stamp
-C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.csproj.Up2Date
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.dll
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.pdb
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.genruntimeconfig.cache
@@ -936,3 +932,7 @@ C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\stamp\_Convert
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\stamp\_GenerateJavaStubs.stamp
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\stamp\_GeneratePackageManagerJava.stamp
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\stamp\_ResolveLibraryProjectImports.stamp
+C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.Maui.Controls.HotReload.Forms.dll
+C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.MobileTapContracts.dll
+C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-android\Microsoft.VisualStudio.DesignTools.TapContract.dll
+C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-android\GymApp.csproj.Up2Date

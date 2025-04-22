@@ -251,9 +251,6 @@ C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\l
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\libxamarin-dotnet-nativeaot.a
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\libxamarin-dotnet.a
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\libxamarin-dotnet.dylib
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\Microsoft.Maui.Controls.HotReload.Forms.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\Microsoft.VisualStudio.DesignTools.MobileTapContracts.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-ios\iossimulator-x64\Microsoft.VisualStudio.DesignTools.TapContract.dll
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\mauiimage.inputs
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\mauifont.inputs
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\mauisplash.inputs
@@ -310,4 +307,3 @@ C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\r
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\GymApp.pdb
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\GymApp.genruntimeconfig.cache
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\ref\GymApp.dll
-C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-ios\iossimulator-x64\build-signature\signature

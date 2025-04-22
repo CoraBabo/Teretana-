@@ -246,9 +246,6 @@ C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalys
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\libxamarin-dotnet-nativeaot.a
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\libxamarin-dotnet.a
 C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\libxamarin-dotnet.dylib
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\Microsoft.Maui.Controls.HotReload.Forms.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\Microsoft.VisualStudio.DesignTools.MobileTapContracts.dll
-C:\Users\User\source\repos\GymApp\GymApp\bin\Debug\net9.0-maccatalyst\maccatalyst-x64\Microsoft.VisualStudio.DesignTools.TapContract.dll
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-maccatalyst\maccatalyst-x64\mauiimage.inputs
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-maccatalyst\maccatalyst-x64\mauifont.inputs
 C:\Users\User\source\repos\GymApp\GymApp\obj\Debug\net9.0-maccatalyst\maccatalyst-x64\mauisplash.inputs

@@ -36,5 +36,14 @@ namespace GymApp
                 viewModel.EditUserCommand.Execute(user);
             }
         }
+
+        private void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.BindingContext is User user)
+            {
+                var viewModel = (UserViewModel)BindingContext;
+                viewModel.DeleteUserCommand.Execute(user);
+            }
+        }
     }
 }
