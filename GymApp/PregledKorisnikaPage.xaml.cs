@@ -4,10 +4,13 @@ namespace GymApp
 {
     public partial class PregledKorisnikaPage : ContentPage
     {
+        private UserViewModel _viewModel;
+
         public PregledKorisnikaPage()
         {
             InitializeComponent();
-            BindingContext = App.SharedViewModel;
+            _viewModel = App.SharedViewModel;
+            BindingContext = _viewModel;
         }
 
         protected override void OnAppearing()
@@ -19,11 +22,15 @@ namespace GymApp
                 var collectionView = this.FindByName<CollectionView>("UsersCollectionView");
                 if (collectionView != null)
                 {
-                    collectionView.ItemsSource = null;
-                    collectionView.ItemsSource = viewModel.Users;
+                    
+                    viewModel.NotifyPropertyChanged(nameof(UserViewModel.FilteredUsers));
+                    System.Diagnostics.Debug.WriteLine("Collection view refreshed on PregledKorisnikaPage");
+                }
 
-                    // Force refresh
-                    viewModel.NotifyPropertyChanged(nameof(UserViewModel.Users));
+                
+                if (!string.IsNullOrEmpty(viewModel.SearchText))
+                {
+                    viewModel.SearchText = string.Empty;
                 }
             }
         }
@@ -43,6 +50,26 @@ namespace GymApp
             {
                 var viewModel = (UserViewModel)BindingContext;
                 viewModel.DeleteUserCommand.Execute(user);
+            }
+        }
+
+        private void OnCopyButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.BindingContext is User user)
+            {
+                var viewModel = (UserViewModel)BindingContext;
+                viewModel.CopyUserCommand.Execute(user);
+            }
+        }
+
+        private void OnSearchButtonClicked(object sender, EventArgs e)
+        {
+            var searchEntry = this.FindByName<Entry>("SearchEntry");
+            if (searchEntry != null)
+            {
+                var viewModel = (UserViewModel)BindingContext;
+                viewModel.SearchUserCommand.Execute(searchEntry.Text);
+                System.Diagnostics.Debug.WriteLine($"Search initiated for text: '{searchEntry.Text}'");
             }
         }
     }

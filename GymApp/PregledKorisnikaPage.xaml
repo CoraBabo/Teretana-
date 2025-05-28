@@ -3,50 +3,94 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:GymApp"
              x:Class="GymApp.PregledKorisnikaPage"
-             Title="Pregled korisnika">
+             Title="Pregled korisnika"
+             BackgroundColor="Black">
+
     <ContentPage.Resources>
         <ResourceDictionary>
-            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <local:BoolToStringConverter x:Key="BoolToStringConverter" />
             <local:EditCommandConverter x:Key="EditCommandConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    <Grid Padding="20">
+
+    <Grid Padding="10" RowSpacing="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label Text="Popis korisnika" FontSize="24" Grid.Row="0" HorizontalOptions="Center" Margin="0,0,0,20" />
-        <Label x:Name="counterLabel" Text="{Binding UserCount}" FontSize="24" Grid.Row="1" HorizontalOptions="Center" Margin="0,0,0,20" />
-        <CollectionView x:Name="UsersCollectionView" Grid.Row="2" ItemsSource="{Binding Users}">
+
+
+        <StackLayout Grid.Row="0" Orientation="Horizontal" Spacing="10">
+            <Label Text="Broj korisnika:" FontSize="18" VerticalOptions="Center" />
+            <Label Text="{Binding UserCount}" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" />
+        </StackLayout>
+
+
+        <Grid Grid.Row="1" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Entry Grid.Column="0" 
+                   Placeholder="Pretraži korisnike..." 
+                   x:Name="SearchEntry"
+                   Text="{Binding SearchText}" />
+
+            <Button Grid.Column="1" 
+                    Text="Pretraži" 
+                    Command="{Binding SearchUserCommand}" 
+                    CommandParameter="{Binding Source={x:Reference SearchEntry}, Path=Text}" />
+        </Grid>
+
+
+        <CollectionView Grid.Row="2" x:Name="UsersCollectionView" ItemsSource="{Binding FilteredUsers}">
             <CollectionView.EmptyView>
-                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label Text="Nema korisnika za prikaz." FontSize="18" TextColor="Gray" />
-                </VerticalStackLayout>
+                <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Nema pronađenih korisnika" 
+                           FontSize="18" 
+                           HorizontalOptions="Center" />
+                </StackLayout>
             </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10" ColumnDefinitions="*, Auto, Auto">
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="{Binding FirstName, StringFormat='Ime: {0}'}" FontAttributes="Bold" />
-                            <Label Text="{Binding LastName, StringFormat='Prezime: {0}'}" />
-                            <Label Text="{Binding Email, StringFormat='Email: {0}'}" />
-                            <Label Text="{Binding DateOfBirth, StringFormat='Datum rođenja: {0:d}'}" />
-                            <Label Text="{Binding Age, StringFormat='Dob: {0} godina'}" />
-                        </VerticalStackLayout>
-                        <Button Grid.Column="1" 
-                                Text="Uredi" 
-                                WidthRequest="100"
-                                VerticalOptions="Center"
-                                Clicked="OnEditButtonClicked" />
-                        <Button Grid.Column="2" 
-                                Text="Obriši" 
-                                WidthRequest="100"
-                                VerticalOptions="Center"
-                                BackgroundColor="Red"
-                                TextColor="White"
-                                Margin="5,0,0,0"
-                                Clicked="OnDeleteButtonClicked" />
-                    </Grid>
+                    <Frame Margin="0,5" Padding="10" BorderColor="LightGray"  HasShadow="True">
+                        <Grid ColumnSpacing="10" RowSpacing="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" 
+                             Text="{Binding FirstName}" 
+                             FontAttributes="Bold" 
+                             FontSize="16" />
+                            <Label Grid.Row="1" Grid.Column="0" 
+                             Text="{Binding LastName}" 
+                             FontSize="16" />
+                            <Label Grid.Row="2" Grid.Column="0" 
+                             Text="{Binding Email}" 
+                             FontSize="14" />
+                            <Label Grid.Row="3" Grid.Column="0" 
+                             Text="{Binding Age, StringFormat='Dob: {0}'}" 
+                             FontSize="14" />
+                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                             Text="Uredi" 
+                             Clicked="OnEditButtonClicked" />
+                            <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2"
+                             Text="Obriši" 
+                             Clicked="OnDeleteButtonClicked" />
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

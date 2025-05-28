@@ -7,6 +7,17 @@ namespace GymApp
     public class UserViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
+        private ObservableCollection<User> filteredUsers;
+
+        public ObservableCollection<User> FilteredUsers
+        {
+            get => filteredUsers ?? Users;
+            set
+            {
+                filteredUsers = value;
+                OnPropertyChanged();
+            }
+        }
 
         public int UserCount => Users.Count;
 
@@ -21,6 +32,22 @@ namespace GymApp
         private string emailError;
         private string dateOfBirthError;
         private string businessError;
+        private string searchText;
+
+        public string SearchText
+        {
+            get => searchText;
+            set
+            {
+                searchText = value;
+                OnPropertyChanged();
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    // Reset the filter when search text is cleared
+                    FilteredUsers = new ObservableCollection<User>(Users);
+                }
+            }
+        }
 
         public string FirstName
         {
@@ -113,6 +140,9 @@ namespace GymApp
         public Command SaveEditCommand { get; }
         public Command CancelEditCommand { get; }
         public Command<User> DeleteUserCommand { get; }
+        public Command<User> CopyUserCommand { get; }
+        public Command<string> SearchUserCommand { get; }
+        public Command ClearSearchCommand { get; }
 
         public UserViewModel()
         {
@@ -121,18 +151,57 @@ namespace GymApp
             SaveEditCommand = new Command(SaveEdit);
             CancelEditCommand = new Command(CancelEdit);
             DeleteUserCommand = new Command<User>(DeleteUser);
+            CopyUserCommand = new Command<User>(CopyUser);
+            SearchUserCommand = new Command<string>(SearchUser);
+            ClearSearchCommand = new Command(ClearSearch);
 
             
-            Users.Add(new User { FirstName = "Debug", LastName = "User", Email = "debug@example.com", DateOfBirth = DateTime.Today.AddYears(-30) });
+            FilteredUsers = new ObservableCollection<User>(Users);
 
-            
-            System.Diagnostics.Debug.WriteLine("UserViewModel initialized");
-            System.Diagnostics.Debug.WriteLine($"Users count: {Users.Count}");
-
+            Users.Add(new User { FirstName = "Debug", LastName = "User", Email = "debug@example.com", DateOfBirth = DateTime.Today.AddYears(-30) });         
             Users.CollectionChanged += (s, e) =>
             {
                 OnPropertyChanged(nameof(UserCount));
+
+                
+                if (string.IsNullOrWhiteSpace(SearchText))
+                {
+                    FilteredUsers = new ObservableCollection<User>(Users);
+                }
+                else
+                {
+                    
+                    SearchUser(SearchText);
+                }
             };
+        }
+
+        private void SearchUser(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {            
+                FilteredUsers = new ObservableCollection<User>(Users);             
+                return;
+            }
+
+            searchText = searchText.ToLower().Trim();
+            
+
+            var filteredList = Users.Where(user =>
+                user.FirstName.ToLower().Contains(searchText) ||
+                user.LastName.ToLower().Contains(searchText) ||
+                user.Email.ToLower().Contains(searchText)).ToList();
+            FilteredUsers = new ObservableCollection<User>(filteredList);
+
+            
+            OnPropertyChanged(nameof(FilteredUsers));
+        }
+
+        private void ClearSearch()
+        {
+            SearchText = string.Empty;
+            FilteredUsers = new ObservableCollection<User>(Users);
+            OnPropertyChanged(nameof(FilteredUsers));
         }
 
         private async void DeleteUser(User user)
@@ -142,10 +211,8 @@ namespace GymApp
 
             System.Diagnostics.Debug.WriteLine($"Attempting to delete user: {user.FirstName} {user.LastName}");
 
-            
             var currentPage = Application.Current.MainPage;
 
-            
             bool confirmed = await currentPage.DisplayAlert(
                 "Potvrda brisanja",
                 $"Jeste li sigurni da želite obrisati korisnika {user.FirstName} {user.LastName}?",
@@ -154,10 +221,7 @@ namespace GymApp
 
             if (confirmed)
             {
-                
                 Users.Remove(user);
-
-                
                 OnPropertyChanged(nameof(Users));
                 System.Diagnostics.Debug.WriteLine($"User deleted. Updated Users count: {Users.Count}");
             }
@@ -165,6 +229,47 @@ namespace GymApp
             {
                 System.Diagnostics.Debug.WriteLine("User deletion cancelled");
             }
+        }
+
+        private void CopyUser(User user)
+        {
+            if (user == null)
+                return;
+
+            System.Diagnostics.Debug.WriteLine($"Copying user: {user.FirstName} {user.LastName}");
+
+            string name = user.FirstName;
+            string baseName = name;
+
+            if (name.Contains(" - kopija"))
+            {
+                int idx = name.IndexOf(" - kopija");
+                if (idx > 0)
+                    baseName = name.Substring(0, idx);
+            }
+
+            string newName = $"{baseName} - kopija";
+            int num = 1;
+
+            while (Users.Any(u => u.FirstName == newName && u.LastName == user.LastName))
+            {
+                num++;
+                newName = $"{baseName} - kopija {num}";
+            }
+
+            var newUser = new User
+            {
+                FirstName = newName,
+                LastName = user.LastName,
+                Email = user.Email,
+                DateOfBirth = user.DateOfBirth
+            };
+
+            System.Diagnostics.Debug.WriteLine($"Adding copy: {newUser.FirstName} {newUser.LastName}");
+            Users.Add(newUser);
+
+            OnPropertyChanged(nameof(Users));
+            System.Diagnostics.Debug.WriteLine($"New Users count: {Users.Count}");
         }
 
         private void ValidateFirstName()
@@ -237,7 +342,6 @@ namespace GymApp
 
         private void ValidateBusinessRules()
         {
-
             bool postoji = Users.Any(u =>
             u.FirstName.Equals(FirstName, StringComparison.OrdinalIgnoreCase) &&
             u.LastName.Equals(LastName, StringComparison.OrdinalIgnoreCase));
@@ -246,7 +350,6 @@ namespace GymApp
             {
                 BusinessError = "Osoba sa ovim imenom i prezimenom vec postoji.";
             }
-
 
             AddUserCommand.ChangeCanExecute();
             SaveEditCommand.ChangeCanExecute();
@@ -292,6 +395,40 @@ namespace GymApp
             {
                 System.Diagnostics.Debug.WriteLine("Validation passed, creating new user");
 
+                string originalFirstName = FirstName;
+
+                bool duplikat = Users.Any(u =>
+                    u.FirstName == originalFirstName &&
+                    u.LastName == LastName &&
+                    u.Email == Email &&
+                    u.DateOfBirth.Date == DateOfBirth.Date);
+
+                if (duplikat)
+                {
+                    int copyCount = 1;
+
+                    foreach (var user in Users)
+                    {
+                        if (user.LastName == LastName &&
+                            user.Email == Email &&
+                            user.DateOfBirth.Date == DateOfBirth.Date &&
+                            user.FirstName.StartsWith(originalFirstName) &&
+                            user.FirstName.Contains("kopija"))
+                        {
+                            copyCount++;
+                        }
+                    }
+
+                    if (copyCount > 1)
+                    {
+                        FirstName = $"{originalFirstName} kopija {copyCount}";
+                    }
+                    else
+                    {
+                        FirstName = $"{originalFirstName} kopija";
+                    }
+                }
+
                 var newUser = new User
                 {
                     FirstName = FirstName,
@@ -303,7 +440,6 @@ namespace GymApp
                 System.Diagnostics.Debug.WriteLine($"Adding user: {newUser.FirstName} {newUser.LastName}");
                 Users.Add(newUser);
 
-                // Force UI update
                 OnPropertyChanged(nameof(Users));
                 System.Diagnostics.Debug.WriteLine($"New Users count: {Users.Count}");
 
@@ -312,7 +448,6 @@ namespace GymApp
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("Attempting navigation to Pregled_korisnika");
-                    // Match the route in AppShell.xaml
                     await Shell.Current.GoToAsync("//Pregled_korisnika");
                     System.Diagnostics.Debug.WriteLine("Navigation successful");
                 }
@@ -321,7 +456,6 @@ namespace GymApp
                     System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
                     System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
 
-                    // Try alternative navigation
                     try
                     {
                         System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
@@ -364,7 +498,7 @@ namespace GymApp
             {
                 System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
 
-                // Try alternative navigation
+                
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
@@ -390,7 +524,7 @@ namespace GymApp
                 SelectedUser.Email = Email;
                 SelectedUser.DateOfBirth = DateOfBirth;
 
-                // Force UI update
+                
                 var index = Users.IndexOf(SelectedUser);
                 if (index >= 0)
                 {
@@ -418,7 +552,7 @@ namespace GymApp
                 {
                     System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
 
-                    // Try alternative navigation
+                    
                     try
                     {
                         System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
@@ -454,7 +588,7 @@ namespace GymApp
             {
                 System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
 
-                // Try alternative navigation
+                
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("Trying to navigate with GoToAsync Shell route");
@@ -487,7 +621,6 @@ namespace GymApp
             ValidateFirstName();
             ValidateLastName();
             ValidateEmail();
-
             ValidateDateOfBirth();
             ValidateBusinessRules();
 
